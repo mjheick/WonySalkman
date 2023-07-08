@@ -133,6 +133,10 @@ function doSearch()
   let search_term = document.getElementById('search-text').value;
   let search_results_output = document.getElementById('search-results');
   let search_results_keys = [];
+  let search_results_buffer = '';
+  let k = 0;
+  let hash = '';
+  let songname = '';
 
   if (search_term.length < 3)
   {
@@ -143,25 +147,24 @@ function doSearch()
   let songKeys = Object.keys(songlist);
   for (k = 0; k < songKeys.length; k++)
   {
-    let songName = songlist[songKeys[k]];
-    songName = songName.toLowerCase();
-    if (songName.indexOf(search_term) >= 0)
+    songname = songlist[songKeys[k]];
+    songname = songname.toLowerCase();
+    if (songname.indexOf(search_term) >= 0)
     {
       search_results_keys.push(songKeys[k]);
     }
   }
   if (search_results_keys.length == 0)
   {
-    search_results_output.innerHTML = 'No results found';
+    search_results_buffer = 'No results found';
   }
   else
   {
-    let search_results_buffer = "";
     search_results_buffer = '<ul>';
     for (k = 0; k < search_results_keys.length; k++)
     {
-      let hash = search_results_keys[k];
-      let songname = songlist[hash];
+      hash = search_results_keys[k];
+      songname = songlist[hash];
       search_results_buffer = search_results_buffer + '<li>';
       search_results_buffer = search_results_buffer + '<a href=\'#' + hash + '\' onclick="javascript:play_song(\'' + hash + '\');">';
       search_results_buffer = search_results_buffer + '<img class="small-button" src="button-play.svg" />';
@@ -174,8 +177,8 @@ function doSearch()
       search_results_buffer = search_results_buffer + '</li>';
     }
     search_results_buffer = search_results_buffer + '</ul>';
-    search_results_output.innerHTML = search_results_buffer;
   }
+  search_results_output.innerHTML = search_results_buffer;
 }
 
 /* Populate songlist[] */
@@ -189,6 +192,13 @@ foreach($file_list as $file)
       <style>
 div {
   width: 100%;
+}
+ul, li {
+  list-style-position: inside;
+  list-style-type: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 li a {
   background: white;
