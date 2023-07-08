@@ -53,79 +53,41 @@ function play_song(hash)
   }
 }
 
-function add_debug_audioPlayer_text(text)
-{
-  var display = document.getElementById('display');
-  display.innerHTML = display.innerHTML + text + "<br>\n";
-}
-
-function add_debug_event_text(text)
-{
-  var date = new Date();
-  var eventdata = document.getElementById('eventdata');
-  eventdata.innerHTML = date.toISOString() + ":" + text + "\n" + eventdata.innerHTML;
-  player_debug_properties();
-}
-
-function player_debug_properties()
-{
-  var display = document.getElementById('display');
-  display.innerHTML = '';
-  if (audioPlayer.autoplay) { add_debug_audioPlayer_text('autoplay = true'); } else { add_debug_audioPlayer_text('autoplay = false'); }
-  if (audioPlayer.controls) { add_debug_audioPlayer_text('controls = true'); } else { add_debug_audioPlayer_text('controls = false'); }
-  add_debug_audioPlayer_text('crossOrigin = ' + audioPlayer.crossOrigin);
-  add_debug_audioPlayer_text('currentSrc = ' + audioPlayer.currentSrc);
-  if (audioPlayer.defaultMuted) { add_debug_audioPlayer_text('defaultMuted = true'); } else { add_debug_audioPlayer_text('defaultMuted = false'); }
-  add_debug_audioPlayer_text('defaultPlaybackRate = ' + audioPlayer.defaultPlaybackRate);
-  if (audioPlayer.disableRemotePlayback) { add_debug_audioPlayer_text('disableRemotePlayback = true'); } else { add_debug_audioPlayer_text('disableRemotePlayback = false'); }
-  add_debug_audioPlayer_text('duration = ' + audioPlayer.duration);
-  if (audioPlayer.ended) { add_debug_audioPlayer_text('ended = true'); } else { add_debug_audioPlayer_text('ended = false'); }
-  if (audioPlayer.loop) { add_debug_audioPlayer_text('loop = true'); } else { add_debug_audioPlayer_text('loop = false'); }
-  if (audioPlayer.muted) { add_debug_audioPlayer_text('muted = true'); } else { add_debug_audioPlayer_text('muted = false'); }
-  add_debug_audioPlayer_text('networkState = ' + audioPlayer.networkState);
-  if (audioPlayer.paused) { add_debug_audioPlayer_text('paused  = true'); } else { add_debug_audioPlayer_text('paused  = false'); }
-  add_debug_audioPlayer_text('playbackRate = ' + audioPlayer.playbackRate);
-  add_debug_audioPlayer_text('readyState  = ' + audioPlayer.readyState);
-  add_debug_audioPlayer_text('sinkId = ' + audioPlayer.sinkId);
-  add_debug_audioPlayer_text('src = ' + audioPlayer.src);
-  add_debug_audioPlayer_text('volume = ' + audioPlayer.volume);
-}
-
 function set_audioPlayer_events(audioPlayer)
 {
-  audioPlayer.addEventListener('abort', function(e) {add_debug_event_text('abort');});
-  audioPlayer.addEventListener('canplay', function(e) {add_debug_event_text('canplay');});
-  audioPlayer.addEventListener('canplaythrough', function(e) {add_debug_event_text('canplaythrough');});
-  audioPlayer.addEventListener('durationchange', function(e) {add_debug_event_text('durationchange');});
-  audioPlayer.addEventListener('emptied', function(e) {add_debug_event_text('emptied');});
+  audioPlayer.addEventListener('abort', function(e) {console.log('abort');});
+  audioPlayer.addEventListener('canplay', function(e) {console.log('canplay');});
+  audioPlayer.addEventListener('canplaythrough', function(e) {console.log('canplaythrough');});
+  audioPlayer.addEventListener('durationchange', function(e) {console.log('durationchange');});
+  audioPlayer.addEventListener('emptied', function(e) {console.log('emptied');});
   audioPlayer.addEventListener('ended', function(e) {
     document.getElementById('now-playing').innerHTML = '';
-    add_debug_event_text('ended');
+    console.log('ended');
   });
-  audioPlayer.addEventListener('error', function(e) {add_debug_event_text('error');});
-  audioPlayer.addEventListener('loadeddata', function(e) {add_debug_event_text('loadeddata');});
-  audioPlayer.addEventListener('loadedmetadata', function(e) {add_debug_event_text('loadedmetadata');});
-  audioPlayer.addEventListener('loadstart', function(e) {add_debug_event_text('loadstart');});
-  audioPlayer.addEventListener('pause', function(e) {add_debug_event_text('pause');});
+  audioPlayer.addEventListener('error', function(e) {console.log('error');});
+  audioPlayer.addEventListener('loadeddata', function(e) {console.log('loadeddata');});
+  audioPlayer.addEventListener('loadedmetadata', function(e) {console.log('loadedmetadata');});
+  audioPlayer.addEventListener('loadstart', function(e) {console.log('loadstart');});
+  audioPlayer.addEventListener('pause', function(e) {console.log('pause');});
   audioPlayer.addEventListener('play', function(e) {
     document.getElementById('now-playing').innerHTML = 'Now Playing: ' + songlist[nowPlaying];
-    add_debug_event_text('play');
+    console.log('play');
   });
-  audioPlayer.addEventListener('playing', function(e) {add_debug_event_text('playing');});
-  audioPlayer.addEventListener('progress', function(e) {add_debug_event_text('progress');});
-  audioPlayer.addEventListener('ratechange', function(e) {add_debug_event_text('ratechange');});
-  audioPlayer.addEventListener('seeked', function(e) {add_debug_event_text('seeked');});
-  audioPlayer.addEventListener('seeking', function(e) {add_debug_event_text('seeking');});
-  audioPlayer.addEventListener('stalled', function(e) {add_debug_event_text('stalled');});
-  audioPlayer.addEventListener('suspend', function(e) {add_debug_event_text('suspend');});
+  audioPlayer.addEventListener('playing', function(e) {console.log('playing');});
+  audioPlayer.addEventListener('progress', function(e) {console.log('progress');});
+  audioPlayer.addEventListener('ratechange', function(e) {console.log('ratechange');});
+  audioPlayer.addEventListener('seeked', function(e) {console.log('seeked');});
+  audioPlayer.addEventListener('seeking', function(e) {console.log('seeking');});
+  audioPlayer.addEventListener('stalled', function(e) {console.log('stalled');});
+  audioPlayer.addEventListener('suspend', function(e) {console.log('suspend');});
   audioPlayer.addEventListener('timeupdate', function(e){
-    /* add_debug_event_text('timeupdate'); */
+    /* console.log('timeupdate'); */
   });
   audioPlayer.addEventListener('volumechange', function(e){
     masterVolume = audioPlayer.volume;
-    add_debug_event_text('volumechange');
+    console.log('volumechange');
   });
-  audioPlayer.addEventListener('waiting', function(e){add_debug_event_text('waiting');});
+  audioPlayer.addEventListener('waiting', function(e){console.log('waiting');});
 }
 
 function doSearch()
@@ -228,11 +190,6 @@ img.small-button {
     <did id="playlist"></div>
     <div id="search">Search <input id="search-text" type="text" value="" placeholder="search here..." onkeyup="doSearch();"/></div>
     <div id="search-results"></div>
-    <div id="debug">
-      <div>Debug Data</div>
-      <div><textarea id="eventdata"></textarea></div>
-      <div id="display"></div>
-    </div>
     <div id="footer"><a href="https://github.com/mjheick/WonySalkman" target="_blank">https://github.com/mjheick/WonySalkman</a></div>
   </div>
 </body>
