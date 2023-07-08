@@ -32,16 +32,42 @@ $d->close();
 /* https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement */
 
 /* Globals */
-var masterVolume = 1;
 var audioPlayer = null;
 var songlist = [];
 var playlist = [];
 var nowPlaying = null;
 var onDeck = null;
 
+/* Browser Session */
+function loadSession()
+{
+  if (localStorage.getItem("saved_state") == "1") {
+    console.log('loading from localStorage...');
+    playlist = localStorage.getItem("playlist");
+    nowPlaying = localStorage.getItem("nowPlaying");
+    onDeck = localStorage.getItem("onDeck");
+    audioPlayer.currentTime = localStorage.getItem("ap.currentTime");
+    audioPlayer.src = localStorage.getItem("ap.src");
+    audioPlayer.volume = localStorage.getItem("ap.volume");
+  }
+}
+
+function saveSession()
+{
+  console.log('saving...');
+  localStorage.setItem("saved_state", "1");
+  localStorage.setItem("ap.volume", audioPlayer.volume);
+  localStorage.setItem("ap.currentTime", audioPlayer.currentTime);
+  localStorage.setItem("ap.src", audioPlayer.src);
+  localStorage.setItem("playlist", playlist);
+  localStorage.setItem("nowPlaying", nowPlaying);
+  localStorage.setItem("onDeck", onDeck);
+}
+
 function initialize()
 {
   setup_radio();
+  loadSession();
 }
 
 function setup_radio()
@@ -54,18 +80,24 @@ function setup_radio()
   audioPlayer.addEventListener('emptied', function(e) {console.log('emptied');});
   audioPlayer.addEventListener('ended', function(e) {
     document.getElementById('now-playing').innerHTML = '';
+    saveSession();
     console.log('ended');
   });
   audioPlayer.addEventListener('error', function(e) {console.log('error');});
   audioPlayer.addEventListener('loadeddata', function(e) {console.log('loadeddata');});
   audioPlayer.addEventListener('loadedmetadata', function(e) {console.log('loadedmetadata');});
   audioPlayer.addEventListener('loadstart', function(e) {console.log('loadstart');});
-  audioPlayer.addEventListener('pause', function(e) {console.log('pause');});
+  audioPlayer.addEventListener('pause', function(e) {
+    console.log('pause');
+  });
   audioPlayer.addEventListener('play', function(e) {
     document.getElementById('now-playing').innerHTML = 'Now Playing: ' + songlist[nowPlaying];
+    saveSession();
     console.log('play');
   });
-  audioPlayer.addEventListener('playing', function(e) {console.log('playing');});
+  audioPlayer.addEventListener('playing', function(e) {
+    console.log('playing');
+  });
   audioPlayer.addEventListener('progress', function(e) {console.log('progress');});
   audioPlayer.addEventListener('ratechange', function(e) {console.log('ratechange');});
   audioPlayer.addEventListener('seeked', function(e) {console.log('seeked');});
@@ -73,10 +105,11 @@ function setup_radio()
   audioPlayer.addEventListener('stalled', function(e) {console.log('stalled');});
   audioPlayer.addEventListener('suspend', function(e) {console.log('suspend');});
   audioPlayer.addEventListener('timeupdate', function(e){
+    saveSession();
     /* console.log('timeupdate'); */
   });
   audioPlayer.addEventListener('volumechange', function(e){
-    masterVolume = audioPlayer.volume;
+    saveSession();
     console.log('volumechange');
   });
   audioPlayer.addEventListener('waiting', function(e){console.log('waiting');});
@@ -86,7 +119,6 @@ function play_song(hash)
 {
   nowPlaying = hash;
   audioPlayer.src = "<?php echo $config['music_path']; ?>/" + songlist[nowPlaying];
-  audioPlayer.volume = masterVolume;
   if (audioPlayer.paused)
   {
     audioPlayer.play();
@@ -109,6 +141,7 @@ function doSearch()
     return;
   }
   search_term = search_term.toLowerCase();
+  console.log(songlist.length);
   let songKeys = Object.keys(songlist);
   for (k = 0; k < songKeys.length; k++)
   {
