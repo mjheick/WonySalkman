@@ -7,7 +7,7 @@ $config = [
 ];
 
 /* Get a list of files */
-$file_list = [];
+$list_of_audio_files = [];
 if (!file_exists($config['music_path'])) {
 	die('music_path does not exist');
 }
@@ -16,7 +16,7 @@ while (false !== ($entry = $d->read())) {
   $ext = strtolower(pathinfo($entry, PATHINFO_EXTENSION));
 	if (in_array($ext, $config['music_extensions']))
 	{
-		$file_list[] = $entry;
+		$list_of_audio_files[] = $entry;
 	}
 }
 $d->close();
@@ -38,23 +38,14 @@ var playlist = [];
 var nowPlaying = null;
 var onDeck = null;
 
-function play_song(hash)
+function initialize()
 {
-  nowPlaying = hash;
-  var radio = document.getElementById('radio');
-  radio.innerHTML = '<audio id="audioPlayer-' + hash + '" controls src="music/' + songlist[nowPlaying] + '">Your browser does not support the audio html element</audio>';
-  audioPlayer = document.getElementById('audioPlayer-' + hash);
-  // before we .play, we need to add every event we can
-  set_audioPlayer_events(audioPlayer);
-  audioPlayer.volume = masterVolume;
-  if (audioPlayer.paused)
-  {
-    audioPlayer.play();
-  }
+  setup_radio();
 }
 
-function set_audioPlayer_events(audioPlayer)
+function setup_radio()
 {
+  audioPlayer = document.getElementById('audioPlayer');
   audioPlayer.addEventListener('abort', function(e) {console.log('abort');});
   audioPlayer.addEventListener('canplay', function(e) {console.log('canplay');});
   audioPlayer.addEventListener('canplaythrough', function(e) {console.log('canplaythrough');});
@@ -88,6 +79,17 @@ function set_audioPlayer_events(audioPlayer)
     console.log('volumechange');
   });
   audioPlayer.addEventListener('waiting', function(e){console.log('waiting');});
+}
+
+function play_song(hash)
+{
+  nowPlaying = hash;
+  audioPlayer.src = "<?php echo $config['music_path']; ?>/" + songlist[nowPlaying];
+  audioPlayer.volume = masterVolume;
+  if (audioPlayer.paused)
+  {
+    audioPlayer.play();
+  }
 }
 
 function doSearch()
@@ -129,10 +131,10 @@ function doSearch()
       songname = songlist[hash];
       search_results_buffer = search_results_buffer + '<li>';
       search_results_buffer = search_results_buffer + '<a href=\'#' + hash + '\' onclick="javascript:play_song(\'' + hash + '\');">';
-      search_results_buffer = search_results_buffer + '<img class="small-button" src="button-play.svg" />';
+      search_results_buffer = search_results_buffer + '<img class="small-button" src="button-play.svg" title="play now" />';
       search_results_buffer = search_results_buffer + '</a>';
       search_results_buffer = search_results_buffer + '<a href=\'#' + hash + '\' onclick="javascript:add_to_playlist(\'' + hash + '\');">';
-      search_results_buffer = search_results_buffer + '<img class="small-button" src="button-plus.svg" />';
+      search_results_buffer = search_results_buffer + '<img class="small-button" src="button-plus.svg" title="add to playlist" />';
       search_results_buffer = search_results_buffer + '</a>';
       search_results_buffer = search_results_buffer + songname;
       search_results_buffer = search_results_buffer + '</a>';
@@ -145,7 +147,7 @@ function doSearch()
 
 /* Populate songlist[] */
 <?php
-foreach($file_list as $file)
+foreach($list_of_audio_files as $file)
 {
   echo 'songlist["' . sha1($file) . '"] = "' . $file . '";' . "\n";
 }
@@ -184,7 +186,7 @@ img.small-button {
   </head>
   <body>
   <div>
-    <div id="radio"></div>
+    <div id="radio"><audio id="audioPlayer" controls src="">Your browser does not support the audio html element</audio></div>
     <div id="now-playing"></div>
     <div id="on-deck"></div>
     <did id="playlist"></div>
@@ -193,4 +195,9 @@ img.small-button {
     <div id="footer"><a href="https://github.com/mjheick/WonySalkman" target="_blank">https://github.com/mjheick/WonySalkman</a></div>
   </div>
 </body>
+<script>
+window.addEventListener("load", (event) => {
+  initialize();
+});
+</script>
 </html>
