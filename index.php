@@ -128,6 +128,51 @@ function set_audioPlayer_events(audioPlayer)
   audioPlayer.addEventListener('waiting', function(e){add_debug_event_text('waiting');});
 }
 
+function doSearch()
+{
+  let search_term = document.getElementById('search-text').value;
+  let search_results_output = document.getElementById('search-results');
+  let search_results_keys = [];
+
+  if (search_term.length < 3)
+  {
+    search_results_output.innerHTML = '';
+    return;
+  }
+  search_term = search_term.toLowerCase();
+  let songKeys = Object.keys(songlist);
+  for (k = 0; k < songKeys.length; k++)
+  {
+    let songName = songlist[songKeys[k]];
+    songName = songName.toLowerCase();
+    if (songName.indexOf(search_term) >= 0)
+    {
+      search_results_keys.push(songKeys[k]);
+    }
+  }
+  if (search_results_keys.length == 0)
+  {
+    search_results_output.innerHTML = 'No results found';
+  }
+  else
+  {
+    let search_results_buffer = "";
+    search_results_buffer = '<ul>';
+    for (k = 0; k < search_results_keys.length; k++)
+    {
+      let hash = search_results_keys[k];
+      let songname = songlist[hash];
+      search_results_buffer = search_results_buffer + '<li>';
+      search_results_buffer = search_results_buffer + '<a href=\'#' + hash + '\' onclick="javascript:play_song(\'' + hash + '\');">';
+      search_results_buffer = search_results_buffer + songname;
+      search_results_buffer = search_results_buffer + '</a>';
+      search_results_buffer = search_results_buffer + '</li>';
+    }
+    search_results_buffer = search_results_buffer + '</ul>';
+    search_results_output.innerHTML = search_results_buffer;
+  }
+}
+
 /* Populate songlist[] */
 <?php
 foreach($file_list as $file)
@@ -161,24 +206,15 @@ div#debug {
     <div id="radio"></div>
     <div id="now-playing"></div>
     <div id="on-deck"></div>
-
-    <did id="playlist">
-      <ul>
-<?php
-foreach($file_list as $file)
-{
-  echo "\t\t\t" . '<li><a href="#' . sha1($file) . '" onclick="javascript:play_song(\'' . sha1($file) . '\'); ">' . $file . '</a></li>' . "\n";
-}
-?>
-      </ul>
-    </div>
-
-    <div id="search">Search <input type="text" value="" placeholder="search here..." /></div>
+    <did id="playlist"></div>
+    <div id="search">Search <input id="search-text" type="text" value="" placeholder="search here..." onkeyup="doSearch();"/></div>
+    <div id="search-results"></div>
     <div id="debug">
       <div>Debug Data</div>
       <div><textarea id="eventdata"></textarea></div>
       <div id="display"></div>
     </div>
+    <div id="footer"><a href="https://github.com/mjheick/WonySalkman" target="_blank">https://github.com/mjheick/WonySalkman</a></div>
   </div>
 </body>
 </html>
