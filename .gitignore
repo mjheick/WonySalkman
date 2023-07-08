@@ -1,0 +1,2 @@
+# The default folder is a world-servable "music" folder. Just don't commit if it's really a folder or a symlink or a reference of some kind.
+music
