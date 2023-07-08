@@ -164,6 +164,11 @@ function doSearch()
       let songname = songlist[hash];
       search_results_buffer = search_results_buffer + '<li>';
       search_results_buffer = search_results_buffer + '<a href=\'#' + hash + '\' onclick="javascript:play_song(\'' + hash + '\');">';
+      search_results_buffer = search_results_buffer + '<img class="small-button" src="button-play.svg" />';
+      search_results_buffer = search_results_buffer + '</a>';
+      search_results_buffer = search_results_buffer + '<a href=\'#' + hash + '\' onclick="javascript:add_to_playlist(\'' + hash + '\');">';
+      search_results_buffer = search_results_buffer + '<img class="small-button" src="button-plus.svg" />';
+      search_results_buffer = search_results_buffer + '</a>';
       search_results_buffer = search_results_buffer + songname;
       search_results_buffer = search_results_buffer + '</a>';
       search_results_buffer = search_results_buffer + '</li>';
@@ -198,6 +203,10 @@ li a:hover {
 }
 div#debug {
   display: none;
+}
+img.small-button {
+  height: 16px;
+  width: 16px;
 }
     </style>
   </head>
