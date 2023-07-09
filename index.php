@@ -37,6 +37,37 @@ var songlist = [];
 var playlist = [];
 var nowPlaying = null;
 var onDeck = null;
+var visuallyDark = 'light';
+
+function flipVisual()
+{
+  let t = ''; /* "text" color */
+  let b = ''; /* Background color */
+  saveSession(); /* Save the value since we flip the value for "next" below this line */
+  if (visuallyDark == 'dark')
+  {
+    t = 'white';
+    b = 'black';
+    visuallyDark = 'light';
+  }
+  else
+  {
+    t = 'black';
+    b = 'white';
+    visuallyDark = 'dark';
+  }
+  let tags = ['a', 'input'];
+  document.getElementsByTagName('body')[0].style.color = t;
+  document.getElementsByTagName('body')[0].style.background = b;
+  for (tag = 0; tag < tags.length; tag++)
+  {
+    for (let x = 0; x < document.getElementsByTagName(tags[tag]).length; x++)
+    {
+      document.getElementsByTagName(tags[tag])[x].style.color = t;
+      document.getElementsByTagName(tags[tag])[x].style.background = b;
+    }
+  }
+}
 
 /* Browser Session */
 function loadSession()
@@ -46,6 +77,7 @@ function loadSession()
     playlist = localStorage.getItem("playlist");
     nowPlaying = localStorage.getItem("nowPlaying");
     onDeck = localStorage.getItem("onDeck");
+    visuallyDark = localStorage.getItem("visuallyDark");
     audioPlayer.currentTime = localStorage.getItem("ap.currentTime");
     audioPlayer.src = localStorage.getItem("ap.src");
     audioPlayer.volume = localStorage.getItem("ap.volume");
@@ -62,12 +94,7 @@ function saveSession()
   localStorage.setItem("playlist", playlist);
   localStorage.setItem("nowPlaying", nowPlaying);
   localStorage.setItem("onDeck", onDeck);
-}
-
-function initialize()
-{
-  setup_radio();
-  loadSession();
+  localStorage.setItem("visuallyDark", visuallyDark);
 }
 
 function setup_radio()
@@ -179,6 +206,13 @@ function doSearch()
   search_results_output.innerHTML = search_results_buffer;
 }
 
+function initialize()
+{
+  setup_radio();
+  loadSession();
+  flipVisual();
+}
+
 /* Populate songlist[] */
 <?php
 foreach($list_of_audio_files as $file)
@@ -188,6 +222,8 @@ foreach($list_of_audio_files as $file)
 ?>
       </script>
       <style>
+body, a {
+}
 div {
   width: 100%;
 }
@@ -199,8 +235,6 @@ ul, li {
   padding: 0;
 }
 li a {
-  background: white;
-  color: black;
   text-decoration: none;
 }
 li a:hover {
@@ -213,6 +247,7 @@ div#debug {
   display: none;
 }
 img.small-button {
+  /* background: white; */
   height: 16px;
   width: 16px;
 }
@@ -227,6 +262,7 @@ img.small-button {
     <div id="search">Search <input id="search-text" type="text" value="" placeholder="search here..." onkeyup="doSearch();"/></div>
     <div id="search-results"></div>
     <div id="footer"><a href="https://github.com/mjheick/WonySalkman" target="_blank">https://github.com/mjheick/WonySalkman</a></div>
+    <div><button onclick="flipVisual();">Dark/Light</button></div>
   </div>
 </body>
 <script>
