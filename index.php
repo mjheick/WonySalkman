@@ -93,7 +93,7 @@ function loadSession()
     }
     else
     {
-      audioPlayer.src = '';
+      audioPlayer.src = 'data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAEAAABkYXRhAQAAAIAA';
     }
     if (localStorage.getItem("ap.volume") !== null)
     {
@@ -347,7 +347,7 @@ img.small-button {
   </head>
   <body>
   <div>
-    <div id="radio"><audio id="audioPlayer" controls src="">Your browser does not support the audio html element</audio></div>
+    <div id="radio"><audio id="audioPlayer" controls src="data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAEAAABkYXRhAQAAAIAA">Your browser does not support the audio html element</audio></div>
     <div id="now-playing"></div>
     <div id="on-deck"></div>
     <did id="playlist"></div>
