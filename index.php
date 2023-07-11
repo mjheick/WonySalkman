@@ -32,31 +32,147 @@ $d->close();
 /* https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement */
 
 /* Globals */
-var audioPlayer = null;
-var songlist = [];
-var playlist = [];
-var nowPlaying = null;
-var onDeck = null;
-var visuallyDark = 'light';
+var songlist = []; /* array */
+var audioPlayer = null; /* object */
+var playlist = null; /* array */
+var nowPlaying = null; /* string */
+var onDeck = null; /* string */
+var visuallyDark = null; /* string */
+
+/* Browser Session */
+function loadSession()
+{
+  console.log('loading from localStorage...');
+  if (localStorage.getItem("playlist") !== null)
+  {
+    playlist = localStorage.getItem("playlist");
+  }
+  else
+  {
+    playlist = [];
+  }
+  if (localStorage.getItem("nowPlaying") !== null)
+  {
+    nowPlaying = localStorage.getItem("nowPlaying");
+  }
+  else
+  {
+    nowPlaying = '';
+  }
+  if (localStorage.getItem("onDeck") !== null)
+  {
+    onDeck = localStorage.getItem("onDeck");
+  }
+  else
+  {
+    onDeck = '';
+  }
+  if (localStorage.getItem("visuallyDark") !== null)
+  {
+    visuallyDark = localStorage.getItem("visuallyDark");
+  }
+  else
+  {
+    visuallyDark = 'light';
+  }
+
+  /* Do we have an audio object? */
+  if (typeof audioPlayer === 'object')
+  {
+    if (localStorage.getItem("ap.currentTime") !== null)
+    {
+        audioPlayer.currentTime = localStorage.getItem("ap.currentTime");
+    }
+    else
+    {
+      audioPlayer.currentTime = 0;
+    }
+    if (localStorage.getItem("ap.src") !== null)
+    {
+        audioPlayer.src = localStorage.getItem("ap.src");
+    }
+    else
+    {
+      audioPlayer.src = '';
+    }
+    if (localStorage.getItem("ap.volume") !== null)
+    {
+        audioPlayer.volume = localStorage.getItem("ap.volume");
+    }
+    else
+    {
+      audioPlayer.volume = 1;
+    }
+  }
+}
+
+function saveSession()
+{
+  console.log('saving...');
+  localStorage.setItem("ap.volume", audioPlayer.volume);
+  localStorage.setItem("ap.currentTime", audioPlayer.currentTime);
+  localStorage.setItem("ap.src", audioPlayer.src);
+  localStorage.setItem("playlist", playlist);
+  localStorage.setItem("nowPlaying", nowPlaying);
+  localStorage.setItem("onDeck", onDeck);
+  localStorage.setItem("visuallyDark", visuallyDark);
+}
+
+function show_playlist()
+{
+  let pl = document.getElementById('playlist');
+  let pl_idx = 0;
+  let pl_text = '<div>Playlist</div>';
+
+  /* Playlist is a list of songlist ids. Just resolve them in the order that's present. */
+  if (playlist.length == 0)
+  {
+    playlist = [];
+    pl_text = pl_text + 'empty';
+    pl.innerHTML = pl_text;
+    return;
+  }
+  for (pl_idx = 0; pl_idx < playlist.length; pl_idx++)
+  {
+    pl_text = pl_text + '<div>' + songlist[playlist[pl_idx]] + '</div>';
+  }
+  pl.innerHTML = pl_text;
+}
+
+function add_to_playlist(id)
+{
+  playlist.push(id);
+  show_playlist();
+}
 
 function flipVisual()
 {
+  if (visuallyDark == 'dark')
+  {
+    visuallyDark = 'light';
+  }
+  else
+  {
+    visuallyDark = 'dark';
+  }
+  setVisual();
+}
+
+function setVisual()
+{
   let t = ''; /* "text" color */
   let b = ''; /* Background color */
-  saveSession(); /* Save the value since we flip the value for "next" below this line */
   if (visuallyDark == 'dark')
   {
     t = 'white';
     b = 'black';
-    visuallyDark = 'light';
   }
   else
   {
     t = 'black';
     b = 'white';
-    visuallyDark = 'dark';
   }
-  let tags = ['a', 'input'];
+  let tags = ['a', 'input', 'img'];
   document.getElementsByTagName('body')[0].style.color = t;
   document.getElementsByTagName('body')[0].style.background = b;
   for (tag = 0; tag < tags.length; tag++)
@@ -67,35 +183,10 @@ function flipVisual()
       document.getElementsByTagName(tags[tag])[x].style.background = b;
     }
   }
+  saveSession(); /* Save the value since we flip the value for "next" below this line */
 }
 
-/* Browser Session */
-function loadSession()
-{
-  if (localStorage.getItem("saved_state") == "1") {
-    console.log('loading from localStorage...');
-    playlist = localStorage.getItem("playlist");
-    nowPlaying = localStorage.getItem("nowPlaying");
-    onDeck = localStorage.getItem("onDeck");
-    visuallyDark = localStorage.getItem("visuallyDark");
-    audioPlayer.currentTime = localStorage.getItem("ap.currentTime");
-    audioPlayer.src = localStorage.getItem("ap.src");
-    audioPlayer.volume = localStorage.getItem("ap.volume");
-  }
-}
 
-function saveSession()
-{
-  console.log('saving...');
-  localStorage.setItem("saved_state", "1");
-  localStorage.setItem("ap.volume", audioPlayer.volume);
-  localStorage.setItem("ap.currentTime", audioPlayer.currentTime);
-  localStorage.setItem("ap.src", audioPlayer.src);
-  localStorage.setItem("playlist", playlist);
-  localStorage.setItem("nowPlaying", nowPlaying);
-  localStorage.setItem("onDeck", onDeck);
-  localStorage.setItem("visuallyDark", visuallyDark);
-}
 
 function setup_radio()
 {
@@ -168,7 +259,6 @@ function doSearch()
     return;
   }
   search_term = search_term.toLowerCase();
-  console.log(songlist.length);
   let songKeys = Object.keys(songlist);
   for (k = 0; k < songKeys.length; k++)
   {
@@ -210,7 +300,9 @@ function initialize()
 {
   setup_radio();
   loadSession();
-  flipVisual();
+  setVisual();
+  show_playlist();
+  doSearch();
 }
 
 /* Populate songlist[] */
