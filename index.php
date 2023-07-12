@@ -39,7 +39,6 @@ var audioPlayer = null; /* object */
 var playlist = null; /* array */
 var nowPlaying = null; /* string */
 var onDeck = null; /* string */
-var visuallyDark = null; /* string */
 
 /* Browser Session */
 function loadSession()
@@ -68,14 +67,6 @@ function loadSession()
   else
   {
     onDeck = '';
-  }
-  if (localStorage.getItem("visuallyDark") !== null)
-  {
-    visuallyDark = localStorage.getItem("visuallyDark");
-  }
-  else
-  {
-    visuallyDark = 'light';
   }
 
   /* Do we have an audio object? */
@@ -117,7 +108,6 @@ function saveSession()
   localStorage.setItem("playlist", playlist);
   localStorage.setItem("nowPlaying", nowPlaying);
   localStorage.setItem("onDeck", onDeck);
-  localStorage.setItem("visuallyDark", visuallyDark);
 }
 
 function show_playlist()
@@ -146,49 +136,6 @@ function add_to_playlist(id)
   playlist.push(id);
   show_playlist();
 }
-
-function flipVisual()
-{
-  if (visuallyDark == 'dark')
-  {
-    visuallyDark = 'light';
-  }
-  else
-  {
-    visuallyDark = 'dark';
-  }
-  setVisual();
-}
-
-function setVisual()
-{
-  let t = ''; /* "text" color */
-  let b = ''; /* Background color */
-  if (visuallyDark == 'dark')
-  {
-    t = 'white';
-    b = 'black';
-  }
-  else
-  {
-    t = 'black';
-    b = 'white';
-  }
-  let tags = ['a', 'input', 'img'];
-  document.getElementsByTagName('body')[0].style.color = t;
-  document.getElementsByTagName('body')[0].style.background = b;
-  for (tag = 0; tag < tags.length; tag++)
-  {
-    for (let x = 0; x < document.getElementsByTagName(tags[tag]).length; x++)
-    {
-      document.getElementsByTagName(tags[tag])[x].style.color = t;
-      document.getElementsByTagName(tags[tag])[x].style.background = b;
-    }
-  }
-  saveSession(); /* Save the value since we flip the value for "next" below this line */
-}
-
-
 
 function setup_radio()
 {
@@ -302,7 +249,6 @@ function initialize()
 {
   setup_radio();
   loadSession();
-  setVisual();
   show_playlist();
   doSearch();
 }
@@ -316,7 +262,9 @@ foreach($list_of_audio_files as $file)
 ?>
       </script>
       <style>
-body, a {
+body, a, div, ul, li, audio {
+  background: black;
+  color: white;
 }
 div {
   width: 100%;
@@ -356,7 +304,6 @@ img.small-button {
     <div class="grid__col" id="search">Search <input id="search-text" type="text" value="" placeholder="search here..." onkeyup="doSearch();"/></div>
     <div class="grid__col" id="search-results"></div>
     <div class="grid__col" id="footer"><a href="https://github.com/mjheick/WonySalkman" target="_blank">https://github.com/mjheick/WonySalkman</a></div>
-    <div class="grid__col"><button onclick="flipVisual();">Dark/Light</button></div>
   </div>
 </body>
 <script>
