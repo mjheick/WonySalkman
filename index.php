@@ -27,6 +27,8 @@ $d->close();
   <head>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <title>WonySalkman</title>
+    <!-- TOAST time: https://daneden.github.io/Toast/ -->
+    <link rel="stylesheet" href="grid.css">
     <script>
 /* All the happy javascript */
 /* https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement */
@@ -346,15 +348,15 @@ img.small-button {
     </style>
   </head>
   <body>
-  <div>
-    <div id="radio"><audio id="audioPlayer" controls src="data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAEAAABkYXRhAQAAAIAA">Your browser does not support the audio html element</audio></div>
-    <div id="now-playing"></div>
-    <div id="on-deck"></div>
-    <did id="playlist"></div>
-    <div id="search">Search <input id="search-text" type="text" value="" placeholder="search here..." onkeyup="doSearch();"/></div>
-    <div id="search-results"></div>
-    <div id="footer"><a href="https://github.com/mjheick/WonySalkman" target="_blank">https://github.com/mjheick/WonySalkman</a></div>
-    <div><button onclick="flipVisual();">Dark/Light</button></div>
+  <div class="grid">
+    <div class="grid__col" id="radio"><audio id="audioPlayer" controls src="data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAEAAABkYXRhAQAAAIAA">Your browser does not support the audio html element</audio></div>
+    <div class="grid__col" id="now-playing"></div>
+    <div class="grid__col" id="on-deck"></div>
+    <div class="grid__col" id="playlist"></div>
+    <div class="grid__col" id="search">Search <input id="search-text" type="text" value="" placeholder="search here..." onkeyup="doSearch();"/></div>
+    <div class="grid__col" id="search-results"></div>
+    <div class="grid__col" id="footer"><a href="https://github.com/mjheick/WonySalkman" target="_blank">https://github.com/mjheick/WonySalkman</a></div>
+    <div class="grid__col"><button onclick="flipVisual();">Dark/Light</button></div>
   </div>
 </body>
 <script>
